@@ -1,0 +1,1 @@
+docker build -t bhd_mt4 .

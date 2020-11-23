@@ -18,7 +18,8 @@ RUN set -ex; \
         wget \
         unzip \
         xz-utils \
-        xvfb
+        xvfb \
+        x11vnc
 
 RUN set -ex; \
     wget -nc https://dl.winehq.org/wine-builds/winehq.key; \
@@ -26,7 +27,7 @@ RUN set -ex; \
     apt-add-repository https://dl.winehq.org/wine-builds/ubuntu/; \
     DEBIAN_FRONTEND=noninteractive apt-get update -y; \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --install-recommends \
-        winehq-stable; \
+        winehq-stable=5.0.3~xenial; \
     rm winehq.key
 
 RUN set -ex; \
@@ -68,6 +69,18 @@ RUN set -ex; \
     /docker/waitonprocess.sh wineserver; \
     winetricks --unattended dotnet40; \
     /docker/waitonprocess.sh wineserver
+
+RUN set -ex; \
+    wget https://dl.winehq.org/wine/wine-mono/4.7.1/wine-mono-4.7.1.msi && \
+    mv wine-mono-4.7.1.msi $HOME/.cache/wine
+
+RUN set -ex; \
+    wget http://dl.winehq.org/wine/wine-gecko/2.47.1/wine-gecko-2.47.1-x86.msi && \
+    mv wine-gecko-2.47.1-x86.msi $HOME/.cache/wine
+
+RUN set -ex; \
+    wget http://dl.winehq.org/wine/wine-gecko/2.47/wine_gecko-2.47-x86.msi && \
+    mv wine_gecko-2.47-x86.msi $HOME/.cache/wine
 
 USER root
 COPY run_mt.sh screenshot.sh /docker/
